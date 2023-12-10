@@ -17,16 +17,18 @@ see [OpenUPM page](https://openupm.com/packages/net.narazaka.unity.shadervalueio
 ## Usage
 
 ```hlsl
-#define NO_TEXTURE
-#define TEXTURE_TEXELSIZE float4(1.0 / 16, 1.0 / 16, 16, 16)
+#define SVIO_NO_TEXTURE
+#define SVIO_TEXTURE_TEXELSIZE float4(1.0 / 16, 1.0 / 16, 16, 16)
 
-#define COMPONENT_COUNT 4
-#define DATABITS 8
-#define DATABLOCK_SIZE 4
-#define DATABLOCK_X 1
-#define COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 2
-#define COMPONENTBLOCK_X 2
+#define SVIO_COMPONENT_COUNT 4
+#define SVIO_DATABITS 8
+#define SVIO_DATABLOCK_SIZE 4
+#define SVIO_DATABLOCK_X 1
+#define SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 2
+#define SVIO_COMPONENTBLOCK_X 2
 #include "Packages/net.narazaka.unity.shadervalueio/ShaderValueIO.cginc"
+
+ShaderValueIO::EncodeFromUint(MyValue(i.uv), i.uv);
 ```
 
 ## License
