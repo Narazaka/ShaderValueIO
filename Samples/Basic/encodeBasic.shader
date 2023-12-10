@@ -32,15 +32,15 @@
 
             float _Color;
 
-            #define NO_TEXTURE
-            #define TEXTURE_TEXELSIZE float4(1.0 / 2, 1.0 / 2, 2, 2)
+            #define SVIO_NO_TEXTURE
+            #define SVIO_TEXTURE_TEXELSIZE float4(1.0 / 2, 1.0 / 2, 2, 2)
 
-            #define COMPONENT_COUNT 4
-            #define DATABITS 2
-            #define DATABLOCK_SIZE 2
-            #define DATABLOCK_X 2
-            #define COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 1
-            #define COMPONENTBLOCK_X 1
+            #define SVIO_COMPONENT_COUNT 4
+            #define SVIO_DATABITS 2
+            #define SVIO_DATABLOCK_SIZE 2
+            #define SVIO_DATABLOCK_X 2
+            #define SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 1
+            #define SVIO_COMPONENTBLOCK_X 1
             #include "../../ShaderValueIO.cginc"
 
             v2f vert (appdata v)
@@ -59,7 +59,7 @@
                 {
                     return color / 3.0;
                 }
-                return EncodeFromUint(color, i.uv);
+                return ShaderValueIO::EncodeFromUint(color, i.uv);
             }
             ENDCG
         }

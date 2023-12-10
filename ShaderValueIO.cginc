@@ -1,298 +1,303 @@
-#ifndef SHADERVALUEIO
-#define SHADERVALUEIO
+#ifndef SVIO_SHADERVALUEIO
+#define SVIO_SHADERVALUEIO
 
-#ifndef TEXTURE
-#ifndef NO_TEXTURE
-#define TEXTURE _MainTex
+namespace ShaderValueIO
+{
+
+#ifndef SVIO_TEXTURE
+#ifndef SVIO_NO_TEXTURE
+#define SVIO_TEXTURE _MainTex
 #endif
 #endif
-#ifndef TEXTURE_TEXELSIZE
-#define TEXTURE_TEXELSIZE _MainTex_TexelSize
+#ifndef SVIO_TEXTURE_TEXELSIZE
+#define SVIO_TEXTURE_TEXELSIZE _MainTex_TexelSize
 #endif
 
 // input value bit
 // ex. UInt16 -> 16
-#ifndef DATABITS
-#define DATABITS 16
+#ifndef SVIO_DATABITS
+#define SVIO_DATABITS 16
 #endif
 // value separate block
-// must be divisor of DATABITS
+// must be divisor of SVIO_DATABITS
 // ex 2x2 -> 4
-#ifndef DATABLOCK_SIZE
-#define DATABLOCK_SIZE 4
+#ifndef SVIO_DATABLOCK_SIZE
+#define SVIO_DATABLOCK_SIZE 4
 #endif
 // value separate block col(x) count
 // 2x2 -> 2, 1x4 -> 1
-#ifndef DATABLOCK_X
-#define DATABLOCK_X 2
+#ifndef SVIO_DATABLOCK_X
+#define SVIO_DATABLOCK_X 2
 #endif
 // input value count
 // ex. uint4 -> 4, float3 -> 3
-#ifndef COMPONENT_COUNT
-#define COMPONENT_COUNT 4
+#ifndef SVIO_COMPONENT_COUNT
+#define SVIO_COMPONENT_COUNT 4
 #endif
 // 1px contains N value components
-// must be divisor of COMPONENT_COUNT
-// ex. uint3/RGB => 3, uint4/RG => 2, uint4/R => 1
-#ifndef COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL
-    #if COMPONENT_COUNT == 1
-    #define COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 1
-    #elif COMPONENT_COUNT == 2
-    #define COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 2
-    #elif COMPONENT_COUNT == 3
-    #define COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 3
-    #elif COMPONENT_COUNT == 4
-    #define COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 4
-    #endif
+// must be divisor of SVIO_COMPONENT_COUNT
+// ex. uint3/SVIO_RGB => 3, uint4/SVIO_RG => 2, uint4/R => 1
+#ifndef SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL
+#if SVIO_COMPONENT_COUNT == 1
+#define SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 1
+#elif SVIO_COMPONENT_COUNT == 2
+#define SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 2
+#elif SVIO_COMPONENT_COUNT == 3
+#define SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 3
+#elif SVIO_COMPONENT_COUNT == 4
+#define SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 4
+#endif
 #endif
 // value components separate block col(x) count
-#ifndef COMPONENTBLOCK_X
-#define COMPONENTBLOCK_X 1
+#ifndef SVIO_COMPONENTBLOCK_X
+#define SVIO_COMPONENTBLOCK_X 1
 #endif
 
-#define DATABLOCK_Y (DATABLOCK_SIZE / DATABLOCK_X)
-#define DATABLOCK uint2(DATABLOCK_X, DATABLOCK_Y)
-#define BIT_PER_DATABLOCK_PIXEL (DATABITS / DATABLOCK_SIZE)
-#define DATA_MAXVALUE ((2 << (DATABITS - 1)) - 1)
-#define DATABLOCK_PIXEL_MAXVALUE ((2 << (BIT_PER_DATABLOCK_PIXEL - 1)) - 1)
-#define COMPONENTBLOCK_SIZE (COMPONENT_COUNT / COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL)
-#define COMPONENTBLOCK_Y (COMPONENTBLOCK_SIZE / COMPONENTBLOCK_X)
-#define COMPONENTBLOCK uint2(COMPONENTBLOCK_X, COMPONENTBLOCK_Y)
+#define SVIO_DATABLOCK_Y (SVIO_DATABLOCK_SIZE / SVIO_DATABLOCK_X)
+#define SVIO_DATABLOCK uint2(SVIO_DATABLOCK_X, SVIO_DATABLOCK_Y)
+#define SVIO_BIT_PER_DATABLOCK_PIXEL (SVIO_DATABITS / SVIO_DATABLOCK_SIZE)
+#define SVIO_DATA_MAXVALUE ((2 << (SVIO_DATABITS - 1)) - 1)
+#define SVIO_DATABLOCK_PIXEL_MAXVALUE ((2 << (SVIO_BIT_PER_DATABLOCK_PIXEL - 1)) - 1)
+#define SVIO_COMPONENTBLOCK_SIZE (SVIO_COMPONENT_COUNT / SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL)
+#define SVIO_COMPONENTBLOCK_Y (SVIO_COMPONENTBLOCK_SIZE / SVIO_COMPONENTBLOCK_X)
+#define SVIO_COMPONENTBLOCK uint2(SVIO_COMPONENTBLOCK_X, SVIO_COMPONENTBLOCK_Y)
 
-#if COMPONENT_COUNT == 1
-#define UINTVALUE uint1
-#elif COMPONENT_COUNT == 2
-#define UINTVALUE uint2
-#elif COMPONENT_COUNT == 3
-#define UINTVALUE uint3
-#elif COMPONENT_COUNT == 4
-#define UINTVALUE uint4
+#if SVIO_COMPONENT_COUNT == 1
+#define SVIO_UINTVALUE uint1
+#elif SVIO_COMPONENT_COUNT == 2
+#define SVIO_UINTVALUE uint2
+#elif SVIO_COMPONENT_COUNT == 3
+#define SVIO_UINTVALUE uint3
+#elif SVIO_COMPONENT_COUNT == 4
+#define SVIO_UINTVALUE uint4
 #endif
 
-#if COMPONENT_COUNT == 1
-#define FLOATVALUE float1
-#elif COMPONENT_COUNT == 2
-#define FLOATVALUE float2
-#elif COMPONENT_COUNT == 3
-#define FLOATVALUE float3
-#elif COMPONENT_COUNT == 4
-#define FLOATVALUE float4
+#if SVIO_COMPONENT_COUNT == 1
+#define SVIO_FLOATVALUE float1
+#elif SVIO_COMPONENT_COUNT == 2
+#define SVIO_FLOATVALUE float2
+#elif SVIO_COMPONENT_COUNT == 3
+#define SVIO_FLOATVALUE float3
+#elif SVIO_COMPONENT_COUNT == 4
+#define SVIO_FLOATVALUE float4
 #endif
 
 // # UVCoord: pixelCoord -> uv
 
-// dec
-float2 UVCoord(uint2 pixelCoord)
-{
+    // dec
+    float2 UVCoord(uint2 pixelCoord)
+    {
     // +0.5 = center point of the pixel
-    return (pixelCoord + 0.5) * TEXTURE_TEXELSIZE.xy;
-}
+        return (pixelCoord + 0.5) * SVIO_TEXTURE_TEXELSIZE.xy;
+    }
 
-float2 ScaledUVCoord(uint2 pixelCoord, uint2 scale)
-{
+    float2 ScaledUVCoord(uint2 pixelCoord, uint2 scale)
+    {
     // +0.5 = center point of the pixel
-    return (pixelCoord + 0.5) * TEXTURE_TEXELSIZE.xy / scale;
-}
+        return (pixelCoord + 0.5) * SVIO_TEXTURE_TEXELSIZE.xy / scale;
+    }
 
 // # PixelCoord: uv -> pixelCoord
 
-uint2 PixelCoord(float2 uv)
-{
-    return uint2(uv * TEXTURE_TEXELSIZE.zw);
-}
+    uint2 PixelCoord(float2 uv)
+    {
+        return uint2(uv * SVIO_TEXTURE_TEXELSIZE.zw);
+    }
 
-uint2 ScaledPixelCoord(float2 uv, uint2 scale)
-{
-    return uint2(uv * TEXTURE_TEXELSIZE.zw * scale);
-}
+    uint2 ScaledPixelCoord(float2 uv, uint2 scale)
+    {
+        return uint2(uv * SVIO_TEXTURE_TEXELSIZE.zw * scale);
+    }
 
-// enc
-uint2 DataBlockPixelCoord(float2 uv)
-{
-    return uint2(uv * TEXTURE_TEXELSIZE.zw * DATABLOCK);
-}
+    // enc
+    uint2 DataBlockPixelCoord(float2 uv)
+    {
+        return uint2(uv * SVIO_TEXTURE_TEXELSIZE.zw * SVIO_DATABLOCK);
+    }
 
-// enc
-uint2 ComponentBlockPixelCoord(float2 uv)
-{
-    return uint2(uv * TEXTURE_TEXELSIZE.zw * DATABLOCK * COMPONENTBLOCK);
-}
+    // enc
+    uint2 ComponentBlockPixelCoord(float2 uv)
+    {
+        return uint2(uv * SVIO_TEXTURE_TEXELSIZE.zw * SVIO_DATABLOCK * SVIO_COMPONENTBLOCK);
+    }
 
-// dec
-uint2 EncodedDataBlockPixelCoord(float2 uv)
-{
-    return uint2(uv * TEXTURE_TEXELSIZE.zw / COMPONENTBLOCK);
-}
+    // dec
+    uint2 EncodedDataBlockPixelCoord(float2 uv)
+    {
+        return uint2(uv * SVIO_TEXTURE_TEXELSIZE.zw / SVIO_COMPONENTBLOCK);
+    }
 
 // # BlockCoord: pixelCoord -> block begin coord
 
-uint2 BlockCoord(uint2 pixelCoord, uint2 blockSize)
-{
-    return (pixelCoord / blockSize) * blockSize;
-}
+    uint2 BlockCoord(uint2 pixelCoord, uint2 blockSize)
+    {
+        return (pixelCoord / blockSize) * blockSize;
+    }
 
-// dec
-uint2 DataBlockCoord(uint2 pixelCoord)
-{
-    return uint2(pixelCoord / DATABLOCK) * DATABLOCK;
-}
+    // dec
+    uint2 DataBlockCoord(uint2 pixelCoord)
+    {
+        return uint2(pixelCoord / SVIO_DATABLOCK) * SVIO_DATABLOCK;
+    }
 
-// dec
-uint2 EncodedComponentBlockCoordFromDataBlockCoord(uint2 blockCoord)
-{
-    return blockCoord * COMPONENTBLOCK;
-}
+    // dec
+    uint2 EncodedComponentBlockCoordFromDataBlockCoord(uint2 blockCoord)
+    {
+        return blockCoord * SVIO_COMPONENTBLOCK;
+    }
 
 // # SubPixelCoord: pixelCoord -> block sub pixel coord
 
-uint2 SubPixelCoord(uint2 pixelCoord, uint2 blockSize)
-{
-    return pixelCoord % blockSize;
-}
+    uint2 SubPixelCoord(uint2 pixelCoord, uint2 blockSize)
+    {
+        return pixelCoord % blockSize;
+    }
 
-// enc
-uint2 DataBlockSubPixelCoord(uint2 pixelCoord)
-{
-    return pixelCoord % DATABLOCK;
-}
+    // enc
+    uint2 DataBlockSubPixelCoord(uint2 pixelCoord)
+    {
+        return pixelCoord % SVIO_DATABLOCK;
+    }
 
-// enc
-uint2 ComponentBlockSubPixelCoord(uint2 outPixelBlockCoord)
-{
-    return outPixelBlockCoord % COMPONENTBLOCK;
-}
+    // enc
+    uint2 ComponentBlockSubPixelCoord(uint2 outPixelBlockCoord)
+    {
+        return outPixelBlockCoord % SVIO_COMPONENTBLOCK;
+    }
 
 // # UVColor: uv -> get color
-#ifndef NO_TEXTURE
-// dec
-float4 UVColor(float2 uv)
-{
-    return tex2Dlod(TEXTURE, float4(uv, 0, 0));
-}
+
+#ifndef SVIO_NO_TEXTURE
+    // dec
+    float4 UVColor(float2 uv)
+    {
+        return tex2Dlod(SVIO_TEXTURE, float4(uv, 0, 0));
+    }
 
 // # PixelColor: pixelCoord -> get color
 
-// dec
-float4 PixelColor(uint2 pixelCoord)
-{
-    return UVColor(UVCoord(pixelCoord));
-}
-
-float4 ScaledPixelColor(uint2 pixelCoord, uint2 scale)
-{
-    return UVColor(ScaledUVCoord(pixelCoord, scale));
-}
-#endif
-
-// enc
-float4 ComponentSeparatedFromBits(FLOATVALUE value, float2 uv)
-{
-#if COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == COMPONENT_COUNT
-#if COMPONENT_COUNT == 1
-    return float4(value, 0, 0, 1);
-#elif COMPONENT_COUNT == 2
-    return float4(value, 0, 1);
-#elif COMPONENT_COUNT == 3
-    return float4(value, 1);
-#elif COMPONENT_COUNT == 4
-    return value;
-#endif
-#else
-    uint2 pixelCoord = ComponentBlockPixelCoord(uv);
-    uint2 subPixelCoord = ComponentBlockSubPixelCoord(pixelCoord);
-    uint pixelIndex = subPixelCoord.x + subPixelCoord.y * COMPONENTBLOCK_X;
-#if COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == 1
-    return float4(value[pixelIndex], 0, 0, 1);
-#elif COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == 2
-    return float4(value[pixelIndex * 2], value[pixelIndex * 2 + 1], 0, 1);
-#endif
-#endif
-}
-
-#ifndef NO_TEXTURE
-FLOATVALUE ComponentBlockPixelColor(uint2 dataBlockPixelCoord)
-{
-#if COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == COMPONENT_COUNT
-#if COMPONENT_COUNT == 1
-    // because always COMPONENT_BLOCK == (1,1)
-    return PixelColor(dataBlockPixelCoord).r;
-#elif COMPONENT_COUNT == 2
-    return PixelColor(dataBlockPixelCoord).rg;
-#elif COMPONENT_COUNT == 3
-    return PixelColor(dataBlockPixelCoord).rgb;
-#elif COMPONENT_COUNT == 4
-    return PixelColor(dataBlockPixelCoord);
-#endif
-#else
-    uint2 blockCoord = EncodedComponentBlockCoordFromDataBlockCoord(dataBlockPixelCoord);
-    FLOATVALUE result = float4(0, 0, 0, 1);
-    for (uint x = 0; x < COMPONENTBLOCK_X; ++x)
+    // dec
+    float4 PixelColor(uint2 pixelCoord)
     {
-        for (uint y = 0; y < COMPONENTBLOCK_Y; ++y)
-        {
-            uint2 subPixelCoord = uint2(x, y);
-            uint index = x + y * COMPONENTBLOCK_X;
-            float4 color = PixelColor(blockCoord + subPixelCoord);
-#if COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == 1
-            result[index] = color.r;
-#elif COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == 2
-            result[index * 2] = color.r;
-            result[index * 2 + 1] = color.g;
-#endif
-        }
+        return UVColor(UVCoord(pixelCoord));
     }
-    return result;
-#endif
-}
-#endif
 
-FLOATVALUE EncodeToBitsFromUint(UINTVALUE value, float2 uv)
-{
-    uint2 pixelCoord = DataBlockPixelCoord(uv);
-    uint2 subPixelCoord = DataBlockSubPixelCoord(pixelCoord);
-    uint bitIndex = (subPixelCoord.x + subPixelCoord.y * DATABLOCK_X) * BIT_PER_DATABLOCK_PIXEL;
-    return FLOATVALUE((value >> bitIndex) & DATABLOCK_PIXEL_MAXVALUE) / DATABLOCK_PIXEL_MAXVALUE;
-}
-
-FLOATVALUE EncodeToBitsFromFloat(FLOATVALUE value, float2 uv)
-{
-    return EncodeToBitsFromUint(UINTVALUE(value * DATA_MAXVALUE + 0.5), uv);
-}
-
-float4 EncodeFromFloat(FLOATVALUE value, float2 uv)
-{
-    return ComponentSeparatedFromBits(EncodeToBitsFromFloat(value, uv), uv);
-}
-
-float4 EncodeFromUint(UINTVALUE value, float2 uv)
-{
-    return ComponentSeparatedFromBits(EncodeToBitsFromUint(value, uv), uv);
-}
-
-#ifndef NO_TEXTURE
-UINTVALUE DecodeToUint(float2 uv)
-{
-    uint2 pixelCoord = EncodedDataBlockPixelCoord(uv);
-    uint2 blockCoord = DataBlockCoord(pixelCoord);
-    UINTVALUE value = uint4(0, 0, 0, 0);
-    for (uint x = 0; x < DATABLOCK_X; ++x)
+    float4 ScaledPixelColor(uint2 pixelCoord, uint2 scale)
     {
-        for (uint y = 0; y < DATABLOCK_Y; ++y)
-        {
-            uint2 subPixelCoord = uint2(x, y);
-            uint bitIndex = (x + y * DATABLOCK_X) * BIT_PER_DATABLOCK_PIXEL;
-            FLOATVALUE color = ComponentBlockPixelColor(blockCoord + subPixelCoord);
-            value = value | (UINTVALUE(color * DATABLOCK_PIXEL_MAXVALUE + 0.5) << bitIndex);
-        }
+        return UVColor(ScaledUVCoord(pixelCoord, scale));
     }
-    // return uint4(pixelCoord / TEXTURE_TEXELSIZE.zw / DATABLOCK, 0, 1);
-    return value;
-}
-
-FLOATVALUE DecodeToFloat(float2 uv)
-{
-    return FLOATVALUE(DecodeToUint(uv)) / DATA_MAXVALUE;
-}
 #endif
+
+    // enc
+    float4 ComponentSeparatedFromBits(SVIO_FLOATVALUE value, float2 uv)
+    {
+    #if SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == SVIO_COMPONENT_COUNT
+    #if SVIO_COMPONENT_COUNT == 1
+        return float4(value, 0, 0, 1);
+    #elif SVIO_COMPONENT_COUNT == 2
+        return float4(value, 0, 1);
+    #elif SVIO_COMPONENT_COUNT == 3
+        return float4(value, 1);
+    #elif SVIO_COMPONENT_COUNT == 4
+        return value;
+    #endif
+    #else
+        uint2 pixelCoord = ComponentBlockPixelCoord(uv);
+        uint2 subPixelCoord = ComponentBlockSubPixelCoord(pixelCoord);
+        uint pixelIndex = subPixelCoord.x + subPixelCoord.y * SVIO_COMPONENTBLOCK_X;
+    #if SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == 1
+        return float4(value[pixelIndex], 0, 0, 1);
+    #elif SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == 2
+        return float4(value[pixelIndex * 2], value[pixelIndex * 2 + 1], 0, 1);
+    #endif
+    #endif
+    }
+
+#ifndef SVIO_NO_TEXTURE
+    SVIO_FLOATVALUE ComponentBlockPixelColor(uint2 dataBlockPixelCoord)
+        {
+    #if SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == SVIO_COMPONENT_COUNT
+    #if SVIO_COMPONENT_COUNT == 1
+        // because always SVIO_COMPONENT_BLOCK == (1,1)
+        return PixelColor(dataBlockPixelCoord).r;
+    #elif SVIO_COMPONENT_COUNT == 2
+        return PixelColor(dataBlockPixelCoord).rg;
+    #elif SVIO_COMPONENT_COUNT == 3
+        return PixelColor(dataBlockPixelCoord).rgb;
+    #elif SVIO_COMPONENT_COUNT == 4
+        return PixelColor(dataBlockPixelCoord);
+    #endif
+    #else
+        uint2 blockCoord = EncodedComponentBlockCoordFromDataBlockCoord(dataBlockPixelCoord);
+        SVIO_FLOATVALUE result = float4(0, 0, 0, 1);
+        for (uint x = 0; x < SVIO_COMPONENTBLOCK_X; ++x)
+        {
+            for (uint y = 0; y < SVIO_COMPONENTBLOCK_Y; ++y)
+            {
+                uint2 subPixelCoord = uint2(x, y);
+                uint index = x + y * SVIO_COMPONENTBLOCK_X;
+                float4 color = PixelColor(blockCoord + subPixelCoord);
+    #if SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == 1
+                result[index] = color.r;
+    #elif SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL == 2
+                result[index * 2] = color.r;
+                result[index * 2 + 1] = color.g;
+    #endif
+            }
+        }
+        return result;
+    #endif
+    }
+#endif
+
+    SVIO_FLOATVALUE EncodeToBitsFromUint(SVIO_UINTVALUE value, float2 uv)
+    {
+        uint2 pixelCoord = DataBlockPixelCoord(uv);
+        uint2 subPixelCoord = DataBlockSubPixelCoord(pixelCoord);
+        uint bitIndex = (subPixelCoord.x + subPixelCoord.y * SVIO_DATABLOCK_X) * SVIO_BIT_PER_DATABLOCK_PIXEL;
+        return SVIO_FLOATVALUE((value >> bitIndex) & SVIO_DATABLOCK_PIXEL_MAXVALUE) / SVIO_DATABLOCK_PIXEL_MAXVALUE;
+    }
+
+    SVIO_FLOATVALUE EncodeToBitsFromFloat(SVIO_FLOATVALUE value, float2 uv)
+    {
+        return EncodeToBitsFromUint(SVIO_UINTVALUE(value * SVIO_DATA_MAXVALUE + 0.5), uv);
+    }
+
+    float4 EncodeFromFloat(SVIO_FLOATVALUE value, float2 uv)
+    {
+        return ComponentSeparatedFromBits(EncodeToBitsFromFloat(value, uv), uv);
+    }
+
+    float4 EncodeFromUint(SVIO_UINTVALUE value, float2 uv)
+    {
+        return ComponentSeparatedFromBits(EncodeToBitsFromUint(value, uv), uv);
+    }
+
+#ifndef SVIO_NO_TEXTURE
+    SVIO_UINTVALUE DecodeToUint(float2 uv)
+    {
+        uint2 pixelCoord = EncodedDataBlockPixelCoord(uv);
+        uint2 blockCoord = DataBlockCoord(pixelCoord);
+        SVIO_UINTVALUE value = uint4(0, 0, 0, 0);
+        for (uint x = 0; x < SVIO_DATABLOCK_X; ++x)
+        {
+            for (uint y = 0; y < SVIO_DATABLOCK_Y; ++y)
+            {
+                uint2 subPixelCoord = uint2(x, y);
+                uint bitIndex = (x + y * SVIO_DATABLOCK_X) * SVIO_BIT_PER_DATABLOCK_PIXEL;
+                SVIO_FLOATVALUE color = ComponentBlockPixelColor(blockCoord + subPixelCoord);
+                value = value | (SVIO_UINTVALUE(color * SVIO_DATABLOCK_PIXEL_MAXVALUE + 0.5) << bitIndex);
+            }
+        }
+        return value;
+    }
+
+    SVIO_FLOATVALUE DecodeToFloat(float2 uv)
+    {
+        return SVIO_FLOATVALUE(DecodeToUint(uv)) / SVIO_DATA_MAXVALUE;
+    }
+#endif
+    
+}
 
 #endif

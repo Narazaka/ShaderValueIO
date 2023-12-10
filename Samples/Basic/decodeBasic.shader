@@ -33,12 +33,12 @@
             sampler2D _MainTex;
             float4 _MainTex_ST;
             float4 _MainTex_TexelSize;
-            #define COMPONENT_COUNT 4
-            #define DATABITS 2
-            #define DATABLOCK_SIZE 2
-            #define DATABLOCK_X 2
-            #define COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 1
-            #define COMPONENTBLOCK_X 1
+            #define SVIO_COMPONENT_COUNT 4
+            #define SVIO_DATABITS 2
+            #define SVIO_DATABLOCK_SIZE 2
+            #define SVIO_DATABLOCK_X 2
+            #define SVIO_COMPONENT_COUNT_PER_COMPONENTBLOCK_PIXEL 1
+            #define SVIO_COMPONENTBLOCK_X 1
             #include "../../ShaderValueIO.cginc"
 
             v2f vert (appdata v)
@@ -51,7 +51,7 @@
 
             float3 frag (v2f i) : SV_Target
             {
-                return DecodeToFloat(i.uv);
+                return ShaderValueIO::DecodeToFloat(i.uv);
             }
             ENDCG
         }
