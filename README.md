@@ -12,7 +12,7 @@ see [OpenUPM page](https://openupm.com/packages/net.narazaka.unity.shadervalueio
 
 1. Press "Add to VCC" on https://vpm.narazaka.net/ to add Narazaka's repository to VCC.
 2. Make sure that "Narazaka VPM Listing" is enabled in VCC -> Settings -> Packages -> Installed Repositories.
-3. Install "Check Missing Scripts" from your project's "Manage Project".
+3. Install "ShaderValueIO" from your project's "Manage Project".
 
 ## Usage
 
