@@ -1,6 +1,6 @@
 {
   "name": "net.narazaka.unity.shadervalueio",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "displayName": "ShaderValueIO",
   "description": "Shader value IO utility (cginc)",
   "author": {
